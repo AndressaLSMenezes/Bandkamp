@@ -3,11 +3,16 @@ from rest_framework import serializers
 from .models import Song
 
 
-class SongSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    title = serializers.CharField(max_length=255)
-    duration = serializers.CharField(max_length=255)
-    album_id = serializers.IntegerField(read_only=True)
+class SongSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Song
+        fields = ["id", "title", "duration", "album_id"]
+        read_only_fields = ["album_id"]
+        extra_kwargs = {
+            "id": {"read_only": True},
+            "title": {"required": True},
+            "duration": {"required": True},
+            "album_id": {"required": True, "read_only": True},
+        }
+        depth = 1
 
-    def create(self, validated_data):
-        return Song.objects.create(**validated_data)
